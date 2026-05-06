@@ -326,3 +326,30 @@ setShips([...ships, newShip]);
 <Aside type="note">
 Personnalisez le style de votre composant `ShipCard`, soit via un fichier `ShipCard.module.css` (comme *Home.module.css*), soit avec les composants **ChakraUI** déjà installés sur le projet.
 </Aside>
+
+---
+
+## Livrable écrit
+
+<Task title="Documenter l'architecture de votre page">
+Maintenant que vous avez implémenté `ShipsPage` et `ShipCard`, rédigez un court document (½ à 1 page, format Markdown dans votre repo Git) qui répond aux questions suivantes :
+
+**1. Arbre des composants**
+Dessinez ou listez la hiérarchie des composants de cette page (quel composant contient quel autre).
+
+**2. Interfaces TypeScript**
+Recopiez et expliquez en une phrase les interfaces que vous avez définies :
+- Quelle est la structure d'un `Ship` ? Pourquoi ces champs ?
+- Quels sont les props de `ShipCard` ?
+
+**3. Où vit l'état — et pourquoi ?**
+- Pourquoi `ships`, `isLoading` et `error` sont-ils dans `ShipsPage` et non dans `ShipCard` ?
+- Qu'est-ce qui se passerait si on mettait l'appel API directement dans `ShipCard` ?
+
+**4. Rôle de `useEffect`**
+Expliquez en vos mots pourquoi l'appel à `BattleshipService.getShips()` est dans un `useEffect` plutôt qu'écrit directement dans le corps du composant.
+</Task>
+
+<Aside type="tip">
+Ce document est un livrable à conserver — vous vous en servirez comme base pour concevoir les sections suivantes du TP.
+</Aside>

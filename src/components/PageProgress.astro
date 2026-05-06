@@ -64,8 +64,8 @@
 
 <script>
   function updateProgress() {
-    const total = document.querySelectorAll('.task-block').length;
-    const done = document.querySelectorAll('.task-block.task-done').length;
+    const total = document.querySelectorAll('.task-block, .written-block').length;
+    const done = document.querySelectorAll('.task-block.task-done, .written-block.written-done').length;
 
     const widget = document.getElementById('tp-widget');
     const count = document.getElementById('tp-count');

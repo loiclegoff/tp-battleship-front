@@ -6,6 +6,7 @@ description: Découverte de useState, useEffect, props et appels API avec axios
 import { Aside } from '@astrojs/starlight/components';
 import Task from '../../components/Task.astro';
 import Example from '../../components/Example.astro';
+import Written from '../../components/Written.astro';
 
 Notions importantes pour cette partie :
 - import et export des composants : [documentation officielle](https://react.dev/learn/importing-and-exporting-components)
@@ -331,7 +332,7 @@ Personnalisez le style de votre composant `ShipCard`, soit via un fichier `ShipC
 
 ## Livrable écrit
 
-<Task title="Documenter l'architecture de votre page">
+<Written title="Documenter l'architecture de votre page">
 Maintenant que vous avez implémenté `ShipsPage` et `ShipCard`, rédigez un court document (½ à 1 page, format Markdown dans votre repo Git) qui répond aux questions suivantes :
 
 **1. Arbre des composants**
@@ -348,7 +349,7 @@ Recopiez et expliquez en une phrase les interfaces que vous avez définies :
 
 **4. Rôle de `useEffect`**
 Expliquez en vos mots pourquoi l'appel à `BattleshipService.getShips()` est dans un `useEffect` plutôt qu'écrit directement dans le corps du composant.
-</Task>
+</Written>
 
 <Aside type="tip">
 Ce document est un livrable à conserver — vous vous en servirez comme base pour concevoir les sections suivantes du TP.

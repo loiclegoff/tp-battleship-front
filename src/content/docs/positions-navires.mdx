@@ -1,0 +1,53 @@
+---
+title: Enregistrement des positions
+description: Formulaire interactif, état partagé entre composants et appels POST
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Task from '../../components/Task.astro';
+
+Notions importantes pour cette partie :
+- Cycle de vie d'un composant React : [documentation sur les effets](https://react.dev/learn/lifecycle-of-reactive-effects)
+- Gérer l'immutabilité des données : [mise à jour d'objets](https://react.dev/learn/updating-objects-in-state)
+- Manipuler des tableaux de façon immutable : [mise à jour de tableaux](https://react.dev/learn/updating-arrays-in-state)
+- État partagé entre composants : [partage d'état](https://react.dev/learn/sharing-state-between-components)
+- Optimisation des rendus : [comprendre les re-renders](https://react.dev/learn/render-and-commit)
+- Utilisation avancée des hooks : [useCallback](https://react.dev/reference/react/useCallback), [useMemo](https://react.dev/reference/react/useMemo), [useRef](https://react.dev/reference/react/useRef)
+
+Cette partie est plus avancée et demande une bonne compréhension de la gestion d'état et du flux de données entre composants. Vous allez créer un formulaire interactif permettant de positionner les navires sur une grille.
+
+## Formulaire d'ajout de navire sur la carte
+
+Revenez sur la page où vous avez listé les navires.
+
+<Task title="Concevoir avant de coder">
+Dans cette partie, vous devez **avant de développer** :
+- réaliser un schéma pour déterminer les différents composants à écrire ;
+- dans chacun des composants : indiquer qui est propriétaire de quel état ;
+- indiquer quelle valeur est injectée dans quel composant. Pensez aussi aux callbacks ;
+- réfléchir à l'interface de vos composants.
+
+Puis implémenter les points suivants :
+- un formulaire devra inclure : la position et l'orientation ;
+- soumettre le contenu du formulaire au serveur (pensez à ajouter la `key` du navire).
+</Task>
+
+<img src="/images/ships-form.png" alt="Proposition de formulaire" style="max-width: 90%; display: block; margin: 1rem auto;" />
+
+## Ajouter dans le formulaire les valeurs enregistrées
+
+<Task title="Pré-remplir le formulaire avec les positions existantes">
+Dans cette partie, vous devez :
+- récupérer les positions des navires ;
+- ajouter les positions en valeur par défaut dans le formulaire ;
+- soumettre le contenu du formulaire au serveur pour créer ou mettre à jour la position du navire ;
+- *(facultatif)* ajouter un indicateur sur la liste des navires pour savoir s'il est déjà enregistré.
+</Task>
+
+<Aside type="note">
+À partir de cette partie, il est recommandé d'utiliser la librairie **Tanstack Query** qui vous permettra de mieux gérer l'asynchronisme des requêtes.
+
+[Documentation Tanstack Query](https://tanstack.com/query/latest/docs/react/overview)
+
+Vous pouvez aussi utiliser un `useState` et un `useEffect` comme dans la section [Afficher les navires](/affichage-navires).
+</Aside>

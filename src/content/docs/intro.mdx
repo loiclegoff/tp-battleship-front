@@ -1,0 +1,197 @@
+---
+title: Introduction à React.js
+description: Découverte de React, JSX, et organisation en composants
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Task from '../../components/Task.astro';
+
+## Écriture d'une page HTML
+
+<Task title="Créer un fichier HTML">
+Commencez par **créer un fichier HTML** dans votre éditeur de code (VSCode).
+Dans ce fichier vous devrez faire apparaître le message *Hello World* en utilisant un navigateur (Chrome, Firefox…).
+
+Vous pouvez vous servir d'un moteur de recherche pour vous aider.
+</Task>
+
+## Utiliser React dans une page HTML
+
+### Mon premier Hello World avec React
+
+Commençons par créer un fichier HTML statique :
+
+```html title="index.html"
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Hello React!</title>
+    <script src="https://unpkg.com/react@18.2.0/umd/react.development.js"></script>
+    <script src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+      // Notre code React ira ici
+    </script>
+  </body>
+</html>
+```
+
+### Premier composant
+
+Créons maintenant notre premier composant React :
+
+- Création d'un composant fonctionnel `App` avec un `return` qui affiche des nœuds DOM
+
+```tsx
+const App = () => {
+  return <h1>Hello world!</h1>
+}
+```
+
+- Utilisation de `ReactDOM.createRoot()` pour afficher le composant dans la `div#root`
+
+```tsx
+const App = () => {
+  return <h1>Hello world!</h1>
+}
+
+const rootElement = document.getElementById("root");
+const root = ReactDOM.createRoot(rootElement);
+
+root.render(<App />);
+```
+
+<Aside type="note">
+Écrire l'ensemble de notre code dans un seul fichier complexifierait l'expérience du développeur. De la même manière que les fonctions, le frontend utilise des **composants** pour découper le code et le factoriser.
+</Aside>
+
+### JSX : le langage des composants React
+
+Le code qui ressemble à du HTML dans nos composants s'appelle **JSX** (*JavaScript XML*). Ce n'est pas du HTML — c'est une syntaxe spéciale que le compilateur TypeScript transforme en appels JavaScript.
+
+Trois règles essentielles :
+
+- **Un seul élément racine** : un composant ne peut retourner qu'un seul élément. Si vous avez plusieurs éléments côte à côte, enveloppez-les dans une `<div>` ou un Fragment vide (`<>...</>`).
+- **`className` à la place de `class`** : `class` est un mot réservé en JavaScript ; on utilise `className` pour les classes CSS.
+- **Les expressions JavaScript entre accolades** : pour insérer une variable ou un calcul dans le JSX, utilisez `{expression}`.
+
+```tsx
+const Greeting = ({ name }: { name: string }) => {
+  const message = "Bonjour";
+  return (
+    <>
+      <h1 className="title">{message}, {name} !</h1>
+      <p>Tu as {2 + 3} points.</p>
+    </>
+  );
+};
+```
+
+## Organiser une page web en composants
+
+Dans le développement React, il est important d'apprendre à décomposer une interface utilisateur en composants réutilisables.
+
+### De l'API JSON à l'interface utilisateur
+
+Imaginons que vous disposez déjà d'une API JSON et d'une maquette créée par un designer.
+
+L'API JSON renvoie des données qui ressemblent à ceci :
+
+```json
+[
+  { "category": "Fruits", "price": "$1", "stocked": true, "name": "Apple" },
+  { "category": "Fruits", "price": "$1", "stocked": true, "name": "Dragonfruit" },
+  { "category": "Fruits", "price": "$2", "stocked": false, "name": "Passionfruit" },
+  { "category": "Vegetables", "price": "$2", "stocked": true, "name": "Spinach" },
+  { "category": "Vegetables", "price": "$4", "stocked": false, "name": "Pumpkin" },
+  { "category": "Vegetables", "price": "$1", "stocked": true, "name": "Peas" }
+]
+```
+
+Et la maquette ressemble à ceci :
+
+<img src="/images/thinking-in-react_ui.png" alt="Maquette d'interface utilisateur" style="max-width: 55%; display: block; margin: 1rem auto;" />
+
+### Décomposition en composants
+
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; align-items: start; margin: 1rem 0;">
+  <img src="/images/thinking-in-react_ui_outline.png" alt="Composants annotés" style="width: 100%; border-radius: 0.4rem;" />
+  <ol>
+    <li><code>FilterableProductTable</code> (gris) — contient l'ensemble de l'application.</li>
+    <li><code>SearchBar</code> (bleu) — reçoit les entrées utilisateur.</li>
+    <li><code>ProductTable</code> (lavande) — affiche et filtre la liste selon les entrées utilisateur.</li>
+    <li><code>ProductCategoryRow</code> (vert) — affiche un en-tête pour chaque catégorie.</li>
+    <li><code>ProductRow</code> (jaune) — affiche une ligne pour chaque produit.</li>
+  </ol>
+</div>
+
+<Aside type="tip" title="Pour aller plus loin">
+Pour en savoir plus sur cette approche de conception, consultez [Thinking in React](https://react.dev/learn/thinking-in-react) dans la documentation officielle.
+</Aside>
+
+### Exercice pratique : vue accueil de YouTube
+
+<img src="/images/youtube.png" alt="Vue accueil YouTube" style="max-width: 88%; display: block; margin: 1rem auto;" />
+
+<Task title="Découper YouTube en composants">
+En regardant la page web ci-dessus (YouTube), proposez un découpage en composants.
+Vous pouvez faire un schéma sur une feuille blanche.
+</Task>
+
+## Conception
+
+<Task title="Lister les vues du Touché-Coulé">
+Lister l'ensemble des vues nécessaires pour la réalisation du jeu *Touché-Coulé*.
+Vous pouvez indiquer les endpoints back qui vous semblent requis pour la réalisation de ces vues.
+
+N'hésitez pas à noter ça dans un fichier *markdown* sur votre repo **Git**.
+</Task>
+
+<Task title="Étude approfondie d'une vue du jeu">
+Détaillez en composants la vue choisie du *Touché-Coulé*.
+
+Vous pouvez utiliser un éditeur en ligne comme [Excalidraw](https://excalidraw.com/). Pensez à l'exporter et à l'insérer dans votre **Git**.
+</Task>
+
+## Installation de l'environnement de développement
+
+<Aside type="note" title="Pourquoi passer à un projet avec npm ?">
+Dans l'exemple précédent, nous avons utilisé React directement depuis un CDN dans un fichier HTML. C'est pratique pour tester, mais inutilisable en production :
+- le fichier grossit vite (tout dans un seul script) ;
+- TypeScript n'est pas supporté nativement par le navigateur ;
+- aucune optimisation (minification, découpage du code…).
+
+**Vite** est l'outil qui résout ces problèmes : il compile le TypeScript, regroupe les fichiers en modules, et optimise le résultat pour la production. La commande `npm run dev` démarre son serveur de développement avec rechargement automatique.
+</Aside>
+
+Clonez le dépôt du projet : [github.com/yannick-joly/ingenierie-du-web-front](https://github.com/yannick-joly/ingenierie-du-web-front)
+
+Lancez **VSCode** en ouvrant le projet frontend.
+
+Dans un terminal (depuis le dossier *frontend*) :
+
+```bash
+# Installation des dépendances
+npm install
+
+# Lancement du serveur de développement
+npm run dev
+```
+
+Vous pouvez maintenant ouvrir votre navigateur sur [http://localhost:5173](http://localhost:5173) pour voir le résultat.
+
+<Aside type="caution">
+Pour l'instant, la majorité du code se trouve dans le fichier **App.tsx**. C'est normal que vous ne compreniez pas tout le contenu à ce stade du TP.
+</Aside>
+
+<Aside type="note" title="React Developer Tools">
+Installez l'extension **React Developer Tools** dans votre navigateur (disponible sur Chrome et Firefox). Elle ajoute deux onglets dans les outils de développement (F12) :
+- **Components** : visualisez l'arbre des composants, leurs props et leur état en temps réel ;
+- **Profiler** : analysez les performances de rendu.
+
+C'est un outil indispensable pour comprendre et déboguer vos composants React.
+</Aside>

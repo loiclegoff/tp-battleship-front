@@ -1,0 +1,54 @@
+---
+title: Suite
+description: Vues restantes de l'application et requêtes authentifiées
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Vous trouverez ici l'ensemble des vues que nous avons identifiées. Certaines ont déjà été implémentées pendant le TP.
+
+## Les vues de l'application
+
+### Vue : Utilisateurs
+
+Vous devez créer une interface qui contiendra un formulaire permettant de :
+- s'enregistrer en tant que nouveau joueur ;
+- se connecter.
+
+Ce formulaire peut se faire sur une même page ou deux.
+
+### Vue : Rejoindre une partie
+
+En fonction des choix que vous avez faits concernant le Matchmaking, vous devez créer une page qui permettra de :
+- rejoindre une partie ;
+- sélectionner une partie ;
+- déclencher une recherche de joueur.
+
+### Vue : Ajout des bateaux
+
+Vous devez réaliser une interface permettant de saisir la position de vos bateaux. Voici quelques exemples :
+- utilisation d'un formulaire de saisie des coordonnées ;
+- **pour aller plus loin** : drag and drop des bateaux sur une carte ;
+- **pour aller plus loin** : gestion des coordonnées invalides (hors carte ou navires qui se chevauchent). Ce point peut être réalisé côté back ou front (ou les deux).
+
+### Vue : Partie
+
+Cette interface est la vue clé de l'application. Elle doit contenir plusieurs sections :
+- indication de l'état de la partie (à qui de jouer et instructions de jeu) ;
+- affichage des tirs effectués ;
+- affichage des tirs reçus ;
+- sélection de la cible (par une saisie de coordonnées, au clic sur une carte…) ;
+- affichage de la fin de la partie ;
+- **pour aller plus loin** : gestion des clics invalides.
+
+### Vue : Classement *(facultatif)*
+
+Afficher la liste des participants avec nombre de victoires.
+
+---
+
+## Les requêtes authentifiées
+
+<Aside type="note">
+Utilisez le `localStorage` pour sauvegarder le token, puis injectez-le dans les méthodes du service pour les requêtes nécessitant une authentification.
+</Aside>

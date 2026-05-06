@@ -1,0 +1,253 @@
+---
+title: Authentification
+description: Formulaires contrôlés, validation et appels POST avec axios
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Task from '../../components/Task.astro';
+import Example from '../../components/Example.astro';
+
+Notions importantes pour cette partie :
+- Gestion des événements avec React : [documentation officielle](https://react.dev/learn/responding-to-events)
+- Gérer les données de formulaire : [documentation inputs](https://react.dev/reference/react-dom/components/input)
+- Les états pour stocker les valeurs de formulaire : [documentation state](https://react.dev/learn/sharing-state-between-components)
+- Valider les données avant envoi : [exemples de validation](https://react.dev/reference/react/useState#examples-basic)
+
+Présentation rapide des notions suivantes :
+- Requêtes POST avec axios : [documentation axios](https://axios-http.com/docs/post_example)
+- Gestion des réponses et des erreurs HTTP
+- Stockage local des tokens d'authentification : [documentation localStorage](https://developer.mozilla.org/fr/docs/Web/API/Window/localStorage)
+- Redirection après authentification avec React Router : [documentation navigation](https://reactrouter.com/start/declarative/navigating)
+
+## Formulaire
+
+<Task title="Créer la page de connexion">
+Sur une nouvelle page (par exemple : `/connexion`), créez un formulaire pour permettre l'authentification.
+Stockez les valeurs dans une variable d'état.
+
+Il n'y a pas d'attente design sur ce formulaire.
+</Task>
+
+### Étape 1 : Formulaire avec un seul champ
+
+<Example title="Étape 1 : Un champ et la gestion de soumission">
+Commençons par créer un formulaire simple avec un seul champ pour le nom d'utilisateur :
+
+```tsx title="src/pages/LoginPage.tsx"
+import React, { useState } from 'react';
+import { Box, Button, Input, Heading, VStack, Field } from '@chakra-ui/react';
+
+const LoginPage: React.FC = () => {
+  const [username, setUsername] = useState('');
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log('Nom d\'utilisateur:', username);
+  };
+
+  return (
+    <Box maxW="md" mx="auto" mt={8} p={6} borderWidth="1px" borderRadius="lg">
+      <Heading mb={6} textAlign="center">Connexion</Heading>
+
+      <form onSubmit={handleSubmit}>
+        <VStack gap={4}>
+          <Field.Root>
+            <Field.Label>Nom</Field.Label>
+            <Input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </Field.Root>
+
+          <Button type="submit" width="full" mt={4} variant="outline">
+            Se connecter
+          </Button>
+        </VStack>
+      </form>
+    </Box>
+  );
+};
+
+export default LoginPage;
+```
+
+Dans cette première étape :
+- création d'un état `username` avec `useState`
+- champ de saisie qui met à jour cet état via `onChange`
+- fonction `handleSubmit` qui affiche la valeur saisie
+</Example>
+
+### Étape 2 : Ajout du mot de passe et état de soumission
+
+<Example title="Étape 2 : Mot de passe et état isSubmitting">
+Améliorons notre formulaire en ajoutant un champ pour le mot de passe et un état pour gérer le processus de soumission :
+
+```tsx title="src/pages/LoginPage.tsx"
+import React, { useState } from 'react';
+import { Box, Button, Input, Heading, VStack, Field } from '@chakra-ui/react';
+
+const LoginPage: React.FC = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    console.log('Données à envoyer:', { username, password });
+
+    // Simulation d'un appel API
+    setTimeout(() => {
+      setIsSubmitting(false);
+    }, 1000);
+  };
+
+  return (
+    <Box maxW="md" mx="auto" mt={8} p={6} borderWidth="1px" borderRadius="lg">
+      <Heading mb={6} textAlign="center">Connexion</Heading>
+
+      <form onSubmit={handleSubmit}>
+        <VStack gap={4}>
+          <Field.Root>
+            <Field.Label>Nom</Field.Label>
+            <Input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+          </Field.Root>
+
+          <Field.Root>
+            <Field.Label>Mot de passe</Field.Label>
+            <Input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </Field.Root>
+
+          <Button
+            type="submit"
+            width="full"
+            mt={4}
+            variant="outline"
+            loading={isSubmitting}
+          >
+            Se connecter
+          </Button>
+        </VStack>
+      </form>
+    </Box>
+  );
+};
+
+export default LoginPage;
+```
+
+Nouveautés de cette étape :
+- état `password` pour le mot de passe
+- état `isSubmitting` pour indiquer que le formulaire est en cours de soumission
+- simulation de délai pour montrer l'état de chargement du bouton
+</Example>
+
+### Étape 3 : Validation des champs
+
+<Example title="Étape 3 : Validation et messages d'erreur">
+Ajoutons une validation simple des champs et une gestion des erreurs :
+
+```tsx title="src/pages/LoginPage.tsx"
+import React, { useState } from 'react';
+import { Box, Button, Input, Heading, VStack, Field } from '@chakra-ui/react';
+
+const LoginPage: React.FC = () => {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const isUsernameError = username === '';
+  const isPasswordError = password === '';
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (isUsernameError || isPasswordError) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    console.log('Données à envoyer:', { username, password });
+
+    setTimeout(() => {
+      setIsSubmitting(false);
+    }, 1000);
+  };
+
+  return (
+    <Box maxW="md" mx="auto" mt={8} p={6} borderWidth="1px" borderRadius="lg">
+      <Heading mb={6} textAlign="center">Connexion</Heading>
+
+      <form onSubmit={handleSubmit}>
+        <VStack gap={4}>
+          <Field.Root required invalid={isUsernameError}>
+            <Field.Label>Nom</Field.Label>
+            <Input
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+            />
+            {isUsernameError && (
+              <Field.ErrorText>Le nom est requis</Field.ErrorText>
+            )}
+          </Field.Root>
+
+          <Field.Root required invalid={isPasswordError}>
+            <Field.Label>Mot de passe</Field.Label>
+            <Input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            {isPasswordError && (
+              <Field.ErrorText>Le mot de passe est requis</Field.ErrorText>
+            )}
+          </Field.Root>
+
+          <Button
+            type="submit"
+            width="full"
+            mt={4}
+            variant="outline"
+            loading={isSubmitting}
+          >
+            Se connecter
+          </Button>
+        </VStack>
+      </form>
+    </Box>
+  );
+};
+
+export default LoginPage;
+```
+</Example>
+
+<Aside type="note" title="Points importants à comprendre">
+- **État local** : React utilise `useState` pour gérer l'état local d'un composant. Chaque fois qu'un état change, le composant se re-render.
+- **Événements** : les fonctions comme `onChange` et `onSubmit` sont des gestionnaires d'événements qui permettent de réagir aux actions de l'utilisateur.
+- **Formulaires contrôlés** : en React, un formulaire est dit "contrôlé" lorsque ses valeurs sont stockées dans l'état et mises à jour via `onChange`.
+- **Validation** : la validation peut être effectuée au moment de la soumission ou en temps réel. Pour des validations plus complexes, il existe des bibliothèques comme *React Hook Form*.
+</Aside>
+
+## Envoi des données vers le serveur
+
+<Task title="Connecter le formulaire à l'API">
+Implémentations à réaliser :
+- mettre à jour le service `battleship.service` ou créer un service `authentification.service` en y intégrant une méthode **authorize** ;
+- déclencher l'appel à **authorize** avec un bouton en y intégrant les valeurs du formulaire.
+</Task>
+
+<Aside type="note">
+Pour les plus avancés, nous ferons des requêtes authentifiées plus tard. Vous pouvez enregistrer le token récupéré dans le localStorage.
+Il faudra alors mettre à jour les requêtes en y ajoutant le token avec les **interceptors**.
+</Aside>

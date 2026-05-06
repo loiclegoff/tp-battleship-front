@@ -1,0 +1,122 @@
+---
+---
+<div id="tp-widget" aria-live="polite">
+  <span id="tp-count"></span>
+  <div id="tp-bar-track">
+    <div id="tp-bar-fill"></div>
+  </div>
+</div>
+
+<style is:global>
+  #tp-widget {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    background: var(--sl-color-bg, white);
+    border: 1.5px solid var(--sl-color-hairline, #e5e7eb);
+    border-radius: 0.6rem;
+    padding: 0.5rem 0.85rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--sl-color-text, #374151);
+    display: none;
+    flex-direction: column;
+    gap: 0.35rem;
+    min-width: 145px;
+    z-index: 200;
+  }
+  #tp-bar-track {
+    height: 4px;
+    background: var(--sl-color-gray-6, #e5e7eb);
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  #tp-bar-fill {
+    height: 100%;
+    background: #ea580c;
+    border-radius: 999px;
+    width: 0%;
+    transition: width 0.3s ease, background 0.3s;
+  }
+  #tp-bar-fill.done {
+    background: #16a34a;
+  }
+
+  /* Badge ✓ dans la sidebar */
+  .tp-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 15px;
+    height: 15px;
+    background: #16a34a;
+    color: white;
+    border-radius: 999px;
+    font-size: 9px;
+    font-weight: 800;
+    margin-left: 0.4rem;
+    vertical-align: middle;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+</style>
+
+<script>
+  function updateProgress() {
+    const total = document.querySelectorAll('.task-block').length;
+    const done = document.querySelectorAll('.task-block.task-done').length;
+
+    const widget = document.getElementById('tp-widget');
+    const count = document.getElementById('tp-count');
+    const fill = document.getElementById('tp-bar-fill');
+    if (!widget || !count || !fill) return;
+
+    if (total === 0) { widget.style.display = 'none'; return; }
+
+    widget.style.display = 'flex';
+    count.textContent = `${done} / ${total} tâche${total > 1 ? 's' : ''}`;
+    fill.style.width = `${Math.round((done / total) * 100)}%`;
+    fill.classList.toggle('done', done === total);
+  }
+
+  function updateSidebar() {
+    document.querySelectorAll<HTMLAnchorElement>('nav a[href]').forEach(link => {
+      // Ignorer les liens d'ancrage du sommaire "Sur cette page"
+      if (link.getAttribute('href')?.startsWith('#')) return;
+      try {
+        const pathname = new URL(link.href).pathname;
+        const total = parseInt(localStorage.getItem(`tp-total:${pathname}`) ?? '0', 10);
+        if (total === 0) return;
+
+        let done = 0;
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key?.startsWith(`tp:${pathname}:`)) done++;
+        }
+
+        const existing = link.querySelector('.tp-badge');
+        if (done === total) {
+          if (!existing) {
+            const badge = document.createElement('span');
+            badge.className = 'tp-badge';
+            badge.textContent = '✓';
+            badge.setAttribute('aria-label', 'Complété');
+            link.appendChild(badge);
+          }
+        } else {
+          existing?.remove();
+        }
+      } catch { /* URL cross-origin ou malformée */ }
+    });
+  }
+
+  function update() {
+    updateProgress();
+    updateSidebar();
+  }
+
+  update();
+  document.addEventListener('astro:page-load', update);
+  window.addEventListener('task-changed', update);
+</script>

@@ -1,0 +1,328 @@
+---
+title: Afficher la liste des navires
+description: Découverte de useState, useEffect, props et appels API avec axios
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Task from '../../components/Task.astro';
+import Example from '../../components/Example.astro';
+
+Notions importantes pour cette partie :
+- import et export des composants : [documentation officielle](https://react.dev/learn/importing-and-exporting-components)
+- injecter des **props** dans un composant : [documentation officielle](https://react.dev/learn/passing-props-to-a-component)
+- l'affichage conditionnel des composants : [documentation officielle](https://react.dev/learn/conditional-rendering)
+- l'affichage des listes : [documentation officielle](https://react.dev/learn/rendering-lists)
+
+## Mise en place du client HTTP
+
+<Aside type="note">
+L'**API Fetch** fournit une interface JavaScript pour accéder aux ressources réseau de manière asynchrone. Pour ce projet, nous utiliserons plutôt **axios**, une bibliothèque HTTP client basée sur les promesses, qui offre une API plus simple.
+([documentation officielle axios](https://axios-http.com/fr/docs/intro))
+</Aside>
+
+<Task title="Étape 1 : Création d'une interface pour les navires">
+Créez un fichier `src/types.ts` et définissez-y l'interface `Ship` :
+
+```typescript title="src/types.ts"
+export interface Ship {
+  key: string;
+  name: string;
+  length: number;
+}
+```
+
+Cette interface décrit la structure des données des navires que nous allons manipuler.
+</Task>
+
+<Task title="Étape 2 : Création du service">
+Créez un dossier `src/services` et à l'intérieur, un fichier `battleship.service.ts` :
+
+```typescript title="src/services/battleship.service.ts"
+import axios from 'axios';
+import { type Ship } from '../types';
+
+const axiosInstance = axios.create({
+  baseURL: "http://www.backend.url",
+});
+
+export default class BattleshipService {
+  static getShips(): Promise<Ship[]> {
+    return axiosInstance
+      .get('/api/ships')
+      .then((resp) => resp.data)
+      .catch((e) => Promise.reject(e));
+  }
+}
+```
+
+Ce service contient une méthode statique `getShips()` qui effectue une requête HTTP GET vers l'API pour récupérer la liste des navires.
+
+C'est dans ce fichier `battleship.service.ts` que vous ajouterez les nouvelles routes backend pour la suite du TP.
+</Task>
+
+<Task title="Étape 3 : Installation d'axios">
+```bash
+npm install axios
+```
+</Task>
+
+---
+
+## Découverte de `useState`
+
+Avant de charger des données depuis le serveur, familiarisons-nous avec `useState`, le hook fondamental de React pour gérer l'état local d'un composant.
+
+<Aside type="note" title="Qu'est-ce qu'un état (state) ?">
+L'état d'un composant, c'est une donnée qui peut **changer au cours du temps** et qui provoque un **re-rendu** du composant quand elle change. Un compteur de clics, la valeur d'un champ de texte, un booléen `isLoading` : ce sont tous des états.
+
+`useState` retourne un tableau de deux éléments :
+- la valeur actuelle de l'état ;
+- une fonction setter pour la modifier.
+</Aside>
+
+<Task title="Exercice : un compteur">
+Créez un composant `Counter.tsx` qui affiche un compteur et deux boutons :
+
+```tsx title="src/components/Counter.tsx"
+import { useState } from 'react';
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  return (
+    <div>
+      <p>Compteur : {count}</p>
+      <button onClick={() => setCount(count + 1)}>+</button>
+      <button onClick={() => setCount(count - 1)}>-</button>
+    </div>
+  );
+};
+
+export default Counter;
+```
+
+Ajoutez ce composant temporairement dans votre application et observez son comportement. Essayez de l'utiliser **deux fois** sur la même page : chaque instance possède son propre état indépendant.
+</Task>
+
+<Task title="Exercice : un champ contrôlé">
+En React, un champ de formulaire est dit **contrôlé** lorsque sa valeur est pilotée par un état. Créez un composant qui affiche en temps réel ce que vous tapez :
+
+```tsx title="src/components/ControlledInput.tsx"
+import { useState } from 'react';
+
+const ControlledInput = () => {
+  const [value, setValue] = useState('');
+
+  return (
+    <div>
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+      />
+      <p>Vous avez tapé : {value}</p>
+    </div>
+  );
+};
+
+export default ControlledInput;
+```
+
+Ce pattern (valeur liée à l'état + `onChange` qui appelle le setter) est la base de tous les formulaires React. Vous le retrouverez dans la section [Authentification](/authentification).
+</Task>
+
+---
+
+## Récupération des navires
+
+### Création d'une nouvelle page
+
+<Task title="Ajouter une nouvelle page">
+En consultant la documentation de [React Router](https://reactrouter.com/start/declarative/routing), ajoutez une nouvelle page à votre projet. Par exemple, créez un fichier `src/pages/ShipsPage.tsx`.
+
+La définition des routes se trouve dans le fichier `src/main.tsx`.
+</Task>
+
+<Aside type="note">
+Dans le code actuel, le composant est utilisé comme page sur le path `/` de votre application. Pour l'instant, nous souhaitons juste créer une nouvelle page pour afficher la liste des navires.
+</Aside>
+
+### Récupérer les navires et les stocker dans un état
+
+<Task title="Créer le composant de page">
+Sur votre nouvelle page, créez un composant qui :
+- utilise le hook **`useState`** pour stocker la liste des navires ;
+- utilise le hook **`useEffect`** pour déclencher l'appel API et mettre à jour cet état ;
+- utilise un composant dédié pour afficher chaque navire.
+
+Vous trouverez plus de détails sur [useState](https://react.dev/reference/react/useState) et [useEffect](https://react.dev/reference/react/useEffect) dans la documentation officielle React.
+</Task>
+
+<Example title="Exemple de mise en œuvre">
+Voici un exemple complet pour la page qui récupère et affiche les navires :
+
+```tsx title="src/pages/ShipsPage.tsx"
+import React, { useEffect, useState } from 'react';
+import BattleshipService from '../services/battleship.service';
+import { type Ship } from '../types';
+import { Box, Heading, Text, Spinner } from '@chakra-ui/react';
+
+const ShipsPage: React.FC = () => {
+  const [ships, setShips] = useState<Ship[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    BattleshipService.getShips()
+      .then(data => {
+        setShips(data);
+        setIsLoading(false);
+      })
+      .catch(err => {
+        console.error('Erreur lors de la récupération des navires:', err);
+        setError('Impossible de charger la liste des navires');
+        setIsLoading(false);
+      });
+  }, []); // tableau vide = s'exécute une seule fois, au premier rendu
+
+  if (isLoading) {
+    return (
+      <Box textAlign="center" p={8}>
+        <Spinner size="xl" />
+        <Text mt={4}>Chargement des navires...</Text>
+      </Box>
+    );
+  }
+
+  if (error) {
+    return <p>{error}</p>;
+  }
+
+  return (
+    <Box p={5}>
+      <Heading as="h1" mb={6}>Liste des navires</Heading>
+      {JSON.stringify(ships)}
+    </Box>
+  );
+};
+
+export default ShipsPage;
+```
+
+Ce composant montre comment :
+- déclarer les états avec `useState` pour gérer les données, le chargement et les erreurs ;
+- utiliser `useEffect` pour déclencher l'appel API au chargement du composant ;
+- afficher différents contenus selon l'état (chargement, erreur ou données).
+
+Il vous reste à créer le composant `ShipCard` qui affichera chaque navire, et à l'utiliser dans le `return`.
+</Example>
+
+<Aside type="note" title="Comprendre le tableau de dépendances de useEffect">
+Le deuxième argument de `useEffect` est le **tableau de dépendances**. Il contrôle *quand* l'effet s'exécute :
+
+- **`[]`** (tableau vide) : l'effet s'exécute *une seule fois*, après le premier rendu — c'est le bon choix pour charger des données initiales ;
+- **`[variable]`** : l'effet se re-déclenche chaque fois que `variable` change — utile pour recharger des données quand un filtre évolue ;
+- **sans tableau** : l'effet s'exécute après *chaque* rendu — rarement voulu, souvent source de boucle infinie.
+</Aside>
+
+<Aside type="note">
+Dans la suite du TP, nous utiliserons une librairie externe pour stocker les données récupérées sur le serveur.
+</Aside>
+
+---
+
+## Affichage des navires
+
+<Aside type="note" title="Props vs State">
+Deux concepts fondamentaux de React :
+
+- **State (état)** : données appartenant *au composant lui-même*, déclarées avec `useState`. Quand l'état change, React re-rend le composant.
+- **Props (propriétés)** : données reçues *depuis le composant parent*. Un composant enfant ne peut pas modifier ses props — il les lit seulement.
+
+**Règle pratique** : si la donnée peut changer et appartient à ce composant, c'est du **state**. Si elle vient d'un parent, c'est une **prop**.
+</Aside>
+
+### Étape 1 : Composant `ShipCard` statique
+
+<Task title="Étape 1 : Créer le composant de façon statique">
+Commençons par créer un composant `ShipCard` qui affiche un navire avec des valeurs codées en dur :
+
+```tsx title="src/components/ShipCard.tsx"
+const ShipCard = () => {
+  return (
+    <div>
+      <h2>Destroyer</h2>
+      <p>Taille : 3 cases</p>
+    </div>
+  );
+};
+
+export default ShipCard;
+```
+
+Importez et utilisez ce composant dans `ShipsPage.tsx` pour vérifier qu'il s'affiche correctement avant de continuer.
+</Task>
+
+### Étape 2 : Passer les données via les props
+
+<Task title="Étape 2 : Définir les props et injecter les données">
+Faisons en sorte que le composant reçoive les données depuis son parent. On définit une interface TypeScript pour documenter ce que le composant attend :
+
+```tsx title="src/components/ShipCard.tsx"
+import { type Ship } from '../types';
+
+interface ShipCardProps {
+  ship: Ship;
+}
+
+const ShipCard = ({ ship }: ShipCardProps) => {
+  return (
+    <div>
+      <h2>{ship.name}</h2>
+      <p>Taille : {ship.length} cases</p>
+    </div>
+  );
+};
+
+export default ShipCard;
+```
+</Task>
+
+### Étape 3 : Afficher la liste avec `.map()`
+
+<Task title="Étape 3 : Utiliser le composant dans la liste">
+Dans `ShipsPage.tsx`, remplacez le `JSON.stringify(ships)` par un rendu de la liste :
+
+```tsx
+return (
+  <Box p={5}>
+    <Heading as="h1" mb={6}>Liste des navires</Heading>
+    {ships.map((ship) => (
+      <ShipCard key={ship.key} ship={ship} />
+    ))}
+  </Box>
+);
+```
+</Task>
+
+<Aside type="caution" title="La prop key est obligatoire dans un .map()">
+Elle permet à React d'identifier chaque élément de façon unique pour optimiser les re-rendus. Évitez d'utiliser l'index du tableau comme clé : préférez un identifiant métier stable comme `ship.key`.
+</Aside>
+
+<Aside type="caution" title="Ne jamais muter le state directement">
+React ne détecte les changements que via la fonction setter :
+
+```tsx
+// ❌ INCORRECT — React ne verra pas le changement
+ships.push(newShip);
+
+// ✅ CORRECT — on passe un nouveau tableau
+setShips([...ships, newShip]);
+```
+</Aside>
+
+<img src="/images/list-ships.png" alt="Proposition de style pour la liste des navires" style="max-width: 55%; display: block; margin: 1rem auto;" />
+
+<Aside type="note">
+Personnalisez le style de votre composant `ShipCard`, soit via un fichier `ShipCard.module.css` (comme *Home.module.css*), soit avec les composants **ChakraUI** déjà installés sur le projet.
+</Aside>

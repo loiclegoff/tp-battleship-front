@@ -1,0 +1,58 @@
+---
+title: Création et utilisation d'une carte
+description: Composant Map, affichage conditionnel et interaction au clic
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Task from '../../components/Task.astro';
+
+La carte pourra servir à afficher les navires enregistrés mais aussi la position du navire en cours de saisie.
+
+## Création de la carte
+
+Créez un nouveau composant **Map.tsx**. Vous pouvez l'intégrer dans votre formulaire de saisie de navire.
+
+<Task title="Créer le composant Map">
+Dans cette partie, vous devez créer une carte :
+- qui contient 10 colonnes (de A à J) ;
+- qui contient 10 lignes (de 1 à 10) ;
+- les cases pourront avoir 3 états différents (pour l'instant) :
+  - vide ;
+  - occupée par un navire ;
+  - en cours de sélection.
+
+Pensez à réfléchir à l'interface de ce composant *Map* avant l'implémentation.
+N'hésitez pas à solliciter une revue de cette interface.
+</Task>
+
+<Aside type="note">
+Dans un premier temps, essayez seulement d'afficher des cases qui ont un des états cités ci-dessus. Vous pouvez les écrire "en dur".
+</Aside>
+
+<img src="/images/map.png" alt="Exemple de rendu de la carte" style="max-width: 42%; display: block; margin: 1rem auto;" />
+
+## Intégration dans l'application
+
+### Affichage des navires
+
+<Task title="Afficher les navires enregistrés sur la carte">
+Dans cette partie, vous devez :
+- créer une fonction permettant de transformer les positions de navire en points ;
+- mettre à jour la `Map` pour afficher les navires enregistrés dans le backend.
+</Task>
+
+### Gestion de la sélection en cours
+
+<Task title="Interaction entre la carte et le formulaire">
+Dans cette partie, vous devez :
+- afficher la saisie en cours sur la carte ;
+- mettre à jour la position du formulaire au clic sur la carte.
+</Task>
+
+<img src="/images/ships-form-final.png" alt="Exemple de rendu final" style="max-width: 90%; display: block; margin: 1rem auto;" />
+
+### Pour aller plus loin
+
+<Task title="Afficher les tirs sur la carte">
+Une fois les parties précédentes terminées, vous pouvez vous avancer en mettant à jour le composant `Map` pour afficher les tirs.
+</Task>

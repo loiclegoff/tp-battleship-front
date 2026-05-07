@@ -42,8 +42,8 @@ const { title = 'Tâche' } = Astro.props;
     });
 
     // Mémorise le total de tâches de la page pour les badges sidebar
-    const total = document.querySelectorAll('.task-block, .written-block').length;
-    if (total > 0) localStorage.setItem(`tp-total:${location.pathname}`, String(total));
+    const total = document.querySelectorAll('.task-block').length;
+    if (total > 0) localStorage.setItem(`tp-tasks-total:${location.pathname}`, String(total));
 
     window.dispatchEvent(new Event('task-changed'));
   }

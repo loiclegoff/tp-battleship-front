@@ -1,9 +1,17 @@
 ---
 ---
 <div id="tp-widget" aria-live="polite">
-  <span id="tp-count"></span>
-  <div id="tp-bar-track">
-    <div id="tp-bar-fill"></div>
+  <div id="tp-tasks-row">
+    <span id="tp-tasks-count"></span>
+    <div class="tp-bar-track">
+      <div id="tp-tasks-fill" class="tp-bar-fill"></div>
+    </div>
+  </div>
+  <div id="tp-written-row">
+    <span id="tp-written-count"></span>
+    <div class="tp-bar-track">
+      <div id="tp-written-fill" class="tp-bar-fill tp-bar-written"></div>
+    </div>
   </div>
 </div>
 
@@ -22,24 +30,35 @@
     color: var(--sl-color-text, #374151);
     display: none;
     flex-direction: column;
-    gap: 0.35rem;
-    min-width: 145px;
+    gap: 0.4rem;
+    min-width: 155px;
     z-index: 200;
   }
-  #tp-bar-track {
+  #tp-tasks-row, #tp-written-row {
+    display: none;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+  .tp-bar-track {
     height: 4px;
     background: var(--sl-color-gray-6, #e5e7eb);
     border-radius: 999px;
     overflow: hidden;
   }
-  #tp-bar-fill {
+  .tp-bar-fill {
     height: 100%;
     background: #ea580c;
     border-radius: 999px;
     width: 0%;
     transition: width 0.3s ease, background 0.3s;
   }
-  #tp-bar-fill.done {
+  .tp-bar-fill.done {
+    background: #16a34a;
+  }
+  .tp-bar-written {
+    background: #0d9488;
+  }
+  .tp-bar-written.done {
     background: #16a34a;
   }
 
@@ -64,35 +83,64 @@
 
 <script>
   function updateProgress() {
-    const total = document.querySelectorAll('.task-block, .written-block').length;
-    const done = document.querySelectorAll('.task-block.task-done, .written-block.written-done').length;
-
     const widget = document.getElementById('tp-widget');
-    const count = document.getElementById('tp-count');
-    const fill = document.getElementById('tp-bar-fill');
-    if (!widget || !count || !fill) return;
+    const tasksRow = document.getElementById('tp-tasks-row');
+    const writtenRow = document.getElementById('tp-written-row');
+    if (!widget || !tasksRow || !writtenRow) return;
 
-    if (total === 0) { widget.style.display = 'none'; return; }
+    const tasksTotal = document.querySelectorAll('.task-block').length;
+    const tasksDone = document.querySelectorAll('.task-block.task-done').length;
+    const writtenTotal = document.querySelectorAll('.written-block').length;
+    const writtenDone = document.querySelectorAll('.written-block.written-done').length;
+
+    if (tasksTotal === 0 && writtenTotal === 0) {
+      widget.style.display = 'none';
+      return;
+    }
 
     widget.style.display = 'flex';
-    count.textContent = `${done} / ${total} tâche${total > 1 ? 's' : ''}`;
-    fill.style.width = `${Math.round((done / total) * 100)}%`;
-    fill.classList.toggle('done', done === total);
+
+    if (tasksTotal > 0) {
+      tasksRow.style.display = 'flex';
+      const count = document.getElementById('tp-tasks-count');
+      const fill = document.getElementById('tp-tasks-fill');
+      if (count) count.textContent = `🟠 ${tasksDone} / ${tasksTotal} tâche${tasksTotal > 1 ? 's' : ''}`;
+      if (fill) {
+        fill.style.width = `${Math.round((tasksDone / tasksTotal) * 100)}%`;
+        fill.classList.toggle('done', tasksDone === tasksTotal);
+      }
+    } else {
+      tasksRow.style.display = 'none';
+    }
+
+    if (writtenTotal > 0) {
+      writtenRow.style.display = 'flex';
+      const count = document.getElementById('tp-written-count');
+      const fill = document.getElementById('tp-written-fill');
+      if (count) count.textContent = `✏ ${writtenDone} / ${writtenTotal} livrable${writtenTotal > 1 ? 's' : ''}`;
+      if (fill) {
+        fill.style.width = `${Math.round((writtenDone / writtenTotal) * 100)}%`;
+        fill.classList.toggle('done', writtenDone === writtenTotal);
+      }
+    } else {
+      writtenRow.style.display = 'none';
+    }
   }
 
   function updateSidebar() {
     document.querySelectorAll<HTMLAnchorElement>('nav a[href]').forEach(link => {
-      // Ignorer les liens d'ancrage du sommaire "Sur cette page"
       if (link.getAttribute('href')?.startsWith('#')) return;
       try {
         const pathname = new URL(link.href).pathname;
-        const total = parseInt(localStorage.getItem(`tp-total:${pathname}`) ?? '0', 10);
+        const tasksTotal = parseInt(localStorage.getItem(`tp-tasks-total:${pathname}`) ?? '0', 10);
+        const writtenTotal = parseInt(localStorage.getItem(`tp-written-total:${pathname}`) ?? '0', 10);
+        const total = tasksTotal + writtenTotal;
         if (total === 0) return;
 
         let done = 0;
         for (let i = 0; i < localStorage.length; i++) {
           const key = localStorage.key(i);
-          if (key?.startsWith(`tp:${pathname}:`)) done++;
+          if (key?.startsWith(`tp:${pathname}:`) || key?.startsWith(`tp-w:${pathname}:`)) done++;
         }
 
         const existing = link.querySelector('.tp-badge');

@@ -22,7 +22,7 @@ const { title = 'Livrable écrit' } = Astro.props;
       const checkbox = block.querySelector<HTMLInputElement>('.written-checkbox');
       if (!checkbox) return;
 
-      const key = `tp:${location.pathname}:${checkbox.dataset.taskTitle ?? ''}`;
+      const key = `tp-w:${location.pathname}:${checkbox.dataset.taskTitle ?? ''}`;
 
       if (localStorage.getItem(key) === '1') {
         checkbox.checked = true;
@@ -41,8 +41,8 @@ const { title = 'Livrable écrit' } = Astro.props;
       });
     });
 
-    const total = document.querySelectorAll('.task-block, .written-block').length;
-    if (total > 0) localStorage.setItem(`tp-total:${location.pathname}`, String(total));
+    const total = document.querySelectorAll('.written-block').length;
+    if (total > 0) localStorage.setItem(`tp-written-total:${location.pathname}`, String(total));
 
     window.dispatchEvent(new Event('task-changed'));
   }
@@ -53,7 +53,7 @@ const { title = 'Livrable écrit' } = Astro.props;
 
 <style>
   .written-block {
-    border: 2px solid #7c3aed;
+    border: 2px solid #0d9488;
     border-radius: 0.5rem;
     margin: 1.5rem 0;
     overflow: hidden;
@@ -64,12 +64,12 @@ const { title = 'Livrable écrit' } = Astro.props;
   }
 
   .written-header {
-    background: #f5f3ff;
-    border-bottom: 1px solid #ddd6fe;
+    background: #f0fdfa;
+    border-bottom: 1px solid #99f6e4;
     padding: 0.6rem 1rem;
     font-weight: 700;
     font-size: 0.875rem;
-    color: #5b21b6;
+    color: #0f766e;
     display: flex;
     align-items: center;
     gap: 0.6rem;
@@ -92,7 +92,7 @@ const { title = 'Livrable écrit' } = Astro.props;
   .written-checkmark {
     width: 17px;
     height: 17px;
-    border: 2px solid #7c3aed;
+    border: 2px solid #0d9488;
     border-radius: 3px;
     display: inline-flex;
     align-items: center;

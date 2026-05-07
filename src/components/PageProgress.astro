@@ -132,19 +132,9 @@
       if (link.getAttribute('href')?.startsWith('#')) return;
       try {
         const pathname = new URL(link.href).pathname;
-        const tasksTotal = parseInt(localStorage.getItem(`tp-tasks-total:${pathname}`) ?? '0', 10);
-        const writtenTotal = parseInt(localStorage.getItem(`tp-written-total:${pathname}`) ?? '0', 10);
-        const total = tasksTotal + writtenTotal;
-        if (total === 0) return;
-
-        let done = 0;
-        for (let i = 0; i < localStorage.length; i++) {
-          const key = localStorage.key(i);
-          if (key?.startsWith(`tp:${pathname}:`) || key?.startsWith(`tp-w:${pathname}:`)) done++;
-        }
-
+        if (localStorage.getItem(`tp-tasks-total:${pathname}`) === null) return;
         const existing = link.querySelector('.tp-badge');
-        if (done === total) {
+        if (localStorage.getItem(`tp-complete:${pathname}`) === '1') {
           if (!existing) {
             const badge = document.createElement('span');
             badge.className = 'tp-badge';
@@ -160,6 +150,24 @@
   }
 
   function update() {
+    // Always refresh totals from DOM for current page
+    localStorage.setItem(`tp-tasks-total:${location.pathname}`, String(document.querySelectorAll('.task-block').length));
+    localStorage.setItem(`tp-written-total:${location.pathname}`, String(document.querySelectorAll('.written-block').length));
+
+    // Re-validate completion from DOM state (classes set by Task/Written init)
+    const tasks = document.querySelectorAll('.task-block');
+    const written = document.querySelectorAll('.written-block');
+    const allDone =
+      (tasks.length > 0 || written.length > 0) &&
+      Array.from(tasks).every(b => b.classList.contains('task-done')) &&
+      Array.from(written).every(b => b.classList.contains('written-done'));
+
+    if (allDone) {
+      localStorage.setItem(`tp-complete:${location.pathname}`, '1');
+    } else {
+      localStorage.removeItem(`tp-complete:${location.pathname}`);
+    }
+
     updateProgress();
     updateSidebar();
   }

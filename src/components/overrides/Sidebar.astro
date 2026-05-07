@@ -1,0 +1,181 @@
+---
+import type { Props } from '@astrojs/starlight/props';
+import MobileMenuFooter from 'virtual:starlight/components/MobileMenuFooter';
+import SidebarPersister from '@astrojs/starlight/components/SidebarPersister.astro';
+import SidebarSublist from '@astrojs/starlight/components/SidebarSublist.astro';
+
+const { sidebar } = Astro.locals.starlightRoute;
+
+const livrables = [
+  {
+    page: 'Introduction',
+    path: '/intro/',
+    items: [
+      'Lister les vues du Touché-Coulé',
+      'Étude approfondie d\'une vue du jeu',
+    ],
+  },
+  {
+    page: 'Afficher les navires',
+    path: '/affichage-navires/',
+    items: [
+      'Documenter l\'architecture de votre page',
+    ],
+  },
+];
+---
+
+<SidebarPersister>
+  <SidebarSublist sublist={sidebar} />
+</SidebarPersister>
+
+<div class="md:sl-hidden">
+  <MobileMenuFooter />
+</div>
+
+<div class="livrables-sidebar not-content">
+  <details open>
+    <summary>
+      <span class="livrables-title">✏ Livrables écrits</span>
+      <span id="livrables-summary-count" class="livrables-count"></span>
+    </summary>
+    <ul class="livrables-list">
+      {livrables.map((group) => (
+        <li class="livrables-group">
+          <a href={group.path} class="livrables-group-title">{group.page}</a>
+          <ul>
+            {group.items.map((item) => (
+              <li
+                class="livrable-item"
+                data-path={group.path}
+                data-title={item}
+              >
+                <span class="livrable-dot" aria-hidden="true">○</span>
+                <span class="livrable-label">{item}</span>
+              </li>
+            ))}
+          </ul>
+        </li>
+      ))}
+    </ul>
+  </details>
+</div>
+
+<script>
+  function updateLivrables() {
+    const items = document.querySelectorAll<HTMLElement>('.livrable-item');
+    let done = 0;
+
+    items.forEach((item) => {
+      const path = item.dataset.path ?? '';
+      const title = item.dataset.title ?? '';
+      const key = `tp-w:${path}:${title}`;
+      const isDone = localStorage.getItem(key) === '1';
+
+      item.classList.toggle('livrable-done', isDone);
+      const dot = item.querySelector('.livrable-dot');
+      if (dot) dot.textContent = isDone ? '✓' : '○';
+      if (isDone) done++;
+    });
+
+    const total = items.length;
+    const countEl = document.getElementById('livrables-summary-count');
+    if (countEl) countEl.textContent = `${done}/${total}`;
+  }
+
+  updateLivrables();
+  document.addEventListener('astro:page-load', updateLivrables);
+  window.addEventListener('task-changed', updateLivrables);
+</script>
+
+<style is:global>
+  .livrables-sidebar {
+    margin-top: 1.5rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--sl-color-hairline, #e5e7eb);
+  }
+
+  .livrables-sidebar details > summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: 0.3rem 0;
+    list-style: none;
+    user-select: none;
+  }
+  .livrables-sidebar details > summary::-webkit-details-marker { display: none; }
+
+  .livrables-title {
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--sl-color-text-accent, #0d9488);
+  }
+
+  .livrables-count {
+    font-size: 0.7rem;
+    font-weight: 700;
+    background: var(--sl-color-gray-6, #e5e7eb);
+    color: var(--sl-color-text, #374151);
+    border-radius: 999px;
+    padding: 0.1rem 0.45rem;
+  }
+
+  .livrables-list {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0;
+  }
+
+  .livrables-group {
+    margin-bottom: 0.75rem;
+  }
+
+  .livrables-group-title {
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--sl-color-text-dimmed, #6b7280);
+    text-decoration: none;
+    display: block;
+    margin-bottom: 0.25rem;
+  }
+  .livrables-group-title:hover {
+    color: var(--sl-color-text-accent, #0d9488);
+  }
+
+  .livrables-group > ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .livrable-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.4rem;
+    font-size: 0.72rem;
+    color: var(--sl-color-text, #374151);
+    padding: 0.15rem 0;
+    line-height: 1.4;
+  }
+
+  .livrable-dot {
+    flex-shrink: 0;
+    font-size: 0.65rem;
+    margin-top: 0.1rem;
+    color: var(--sl-color-gray-4, #9ca3af);
+  }
+
+  .livrable-item.livrable-done .livrable-dot {
+    color: #16a34a;
+    font-weight: 800;
+  }
+
+  .livrable-item.livrable-done .livrable-label {
+    color: #16a34a;
+    text-decoration: line-through;
+    text-decoration-color: #86efac;
+  }
+</style>

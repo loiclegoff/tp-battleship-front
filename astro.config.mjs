@@ -12,6 +12,7 @@ export default defineConfig({
 			},
 			components: {
 				PageTitle: './src/components/overrides/PageTitle.astro',
+				Sidebar: './src/components/overrides/Sidebar.astro',
 			},
 			sidebar: [
 				{ label: 'Objectifs', slug: '' },

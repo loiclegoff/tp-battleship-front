@@ -22,15 +22,18 @@ Présentation rapide des notions suivantes :
 ## Formulaire
 
 <Task title="Créer la page de connexion">
+
 Sur une nouvelle page (par exemple : `/connexion`), créez un formulaire pour permettre l'authentification.
 Stockez les valeurs dans une variable d'état.
 
 Il n'y a pas d'attente design sur ce formulaire.
+
 </Task>
 
 ### Étape 1 : Formulaire avec un seul champ
 
 <Example title="Étape 1 : Un champ et la gestion de soumission">
+
 Commençons par créer un formulaire simple avec un seul champ pour le nom d'utilisateur :
 
 ```tsx title="src/pages/LoginPage.tsx"
@@ -76,11 +79,13 @@ Dans cette première étape :
 - création d'un état `username` avec `useState`
 - champ de saisie qui met à jour cet état via `onChange`
 - fonction `handleSubmit` qui affiche la valeur saisie
+
 </Example>
 
 ### Étape 2 : Ajout du mot de passe et état de soumission
 
 <Example title="Étape 2 : Mot de passe et état isSubmitting">
+
 Améliorons notre formulaire en ajoutant un champ pour le mot de passe et un état pour gérer le processus de soumission :
 
 ```tsx title="src/pages/LoginPage.tsx"
@@ -149,11 +154,13 @@ Nouveautés de cette étape :
 - état `password` pour le mot de passe
 - état `isSubmitting` pour indiquer que le formulaire est en cours de soumission
 - simulation de délai pour montrer l'état de chargement du bouton
+
 </Example>
 
 ### Étape 3 : Validation des champs
 
 <Example title="Étape 3 : Validation et messages d'erreur">
+
 Ajoutons une validation simple des champs et une gestion des erreurs :
 
 ```tsx title="src/pages/LoginPage.tsx"
@@ -230,6 +237,7 @@ const LoginPage: React.FC = () => {
 
 export default LoginPage;
 ```
+
 </Example>
 
 <Aside type="note" title="Points importants à comprendre">
@@ -242,9 +250,11 @@ export default LoginPage;
 ## Envoi des données vers le serveur
 
 <Task title="Connecter le formulaire à l'API">
+
 Implémentations à réaliser :
 - mettre à jour le service `battleship.service` ou créer un service `authentification.service` en y intégrant une méthode **authorize** ;
 - déclencher l'appel à **authorize** avec un bouton en y intégrant les valeurs du formulaire.
+
 </Task>
 
 <Aside type="note">

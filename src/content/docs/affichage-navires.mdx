@@ -22,6 +22,7 @@ L'**API Fetch** fournit une interface JavaScript pour accéder aux ressources r�
 </Aside>
 
 <Task title="Étape 1 : Création d'une interface pour les navires">
+
 Créez un fichier `src/types.ts` et définissez-y l'interface `Ship` :
 
 ```typescript title="src/types.ts"
@@ -33,9 +34,11 @@ export interface Ship {
 ```
 
 Cette interface décrit la structure des données des navires que nous allons manipuler.
+
 </Task>
 
 <Task title="Étape 2 : Création du service">
+
 Créez un dossier `src/services` et à l'intérieur, un fichier `battleship.service.ts` :
 
 ```typescript title="src/services/battleship.service.ts"
@@ -59,12 +62,15 @@ export default class BattleshipService {
 Ce service contient une méthode statique `getShips()` qui effectue une requête HTTP GET vers l'API pour récupérer la liste des navires.
 
 C'est dans ce fichier `battleship.service.ts` que vous ajouterez les nouvelles routes backend pour la suite du TP.
+
 </Task>
 
 <Task title="Étape 3 : Installation d'axios">
+
 ```bash
 npm install axios
 ```
+
 </Task>
 
 ---
@@ -82,6 +88,7 @@ L'état d'un composant, c'est une donnée qui peut **changer au cours du temps**
 </Aside>
 
 <Task title="Exercice : un compteur">
+
 Créez un composant `Counter.tsx` qui affiche un compteur et deux boutons :
 
 ```tsx title="src/components/Counter.tsx"
@@ -103,9 +110,11 @@ export default Counter;
 ```
 
 Ajoutez ce composant temporairement dans votre application et observez son comportement. Essayez de l'utiliser **deux fois** sur la même page : chaque instance possède son propre état indépendant.
+
 </Task>
 
 <Task title="Exercice : un champ contrôlé">
+
 En React, un champ de formulaire est dit **contrôlé** lorsque sa valeur est pilotée par un état. Créez un composant qui affiche en temps réel ce que vous tapez :
 
 ```tsx title="src/components/ControlledInput.tsx"
@@ -130,6 +139,7 @@ export default ControlledInput;
 ```
 
 Ce pattern (valeur liée à l'état + `onChange` qui appelle le setter) est la base de tous les formulaires React. Vous le retrouverez dans la section [Authentification](/authentification).
+
 </Task>
 
 ---
@@ -139,9 +149,11 @@ Ce pattern (valeur liée à l'état + `onChange` qui appelle le setter) est la b
 ### Création d'une nouvelle page
 
 <Task title="Ajouter une nouvelle page">
+
 En consultant la documentation de [React Router](https://reactrouter.com/start/declarative/routing), ajoutez une nouvelle page à votre projet. Par exemple, créez un fichier `src/pages/ShipsPage.tsx`.
 
 La définition des routes se trouve dans le fichier `src/main.tsx`.
+
 </Task>
 
 <Aside type="note">
@@ -151,15 +163,18 @@ Dans le code actuel, le composant est utilisé comme page sur le path `/` de vot
 ### Récupérer les navires et les stocker dans un état
 
 <Task title="Créer le composant de page">
+
 Sur votre nouvelle page, créez un composant qui :
 - utilise le hook **`useState`** pour stocker la liste des navires ;
 - utilise le hook **`useEffect`** pour déclencher l'appel API et mettre à jour cet état ;
 - utilise un composant dédié pour afficher chaque navire.
 
 Vous trouverez plus de détails sur [useState](https://react.dev/reference/react/useState) et [useEffect](https://react.dev/reference/react/useEffect) dans la documentation officielle React.
+
 </Task>
 
 <Example title="Exemple de mise en œuvre">
+
 Voici un exemple complet pour la page qui récupère et affiche les navires :
 
 ```tsx title="src/pages/ShipsPage.tsx"
@@ -216,6 +231,7 @@ Ce composant montre comment :
 - afficher différents contenus selon l'état (chargement, erreur ou données).
 
 Il vous reste à créer le composant `ShipCard` qui affichera chaque navire, et à l'utiliser dans le `return`.
+
 </Example>
 
 <Aside type="note" title="Comprendre le tableau de dépendances de useEffect">
@@ -246,6 +262,7 @@ Deux concepts fondamentaux de React :
 ### Étape 1 : Composant `ShipCard` statique
 
 <Task title="Étape 1 : Créer le composant de façon statique">
+
 Commençons par créer un composant `ShipCard` qui affiche un navire avec des valeurs codées en dur :
 
 ```tsx title="src/components/ShipCard.tsx"
@@ -262,11 +279,13 @@ export default ShipCard;
 ```
 
 Importez et utilisez ce composant dans `ShipsPage.tsx` pour vérifier qu'il s'affiche correctement avant de continuer.
+
 </Task>
 
 ### Étape 2 : Passer les données via les props
 
 <Task title="Étape 2 : Définir les props et injecter les données">
+
 Faisons en sorte que le composant reçoive les données depuis son parent. On définit une interface TypeScript pour documenter ce que le composant attend :
 
 ```tsx title="src/components/ShipCard.tsx"
@@ -287,11 +306,13 @@ const ShipCard = ({ ship }: ShipCardProps) => {
 
 export default ShipCard;
 ```
+
 </Task>
 
 ### Étape 3 : Afficher la liste avec `.map()`
 
 <Task title="Étape 3 : Utiliser le composant dans la liste">
+
 Dans `ShipsPage.tsx`, remplacez le `JSON.stringify(ships)` par un rendu de la liste :
 
 ```tsx
@@ -304,6 +325,7 @@ return (
   </Box>
 );
 ```
+
 </Task>
 
 <Aside type="caution" title="La prop key est obligatoire dans un .map()">

@@ -246,6 +246,14 @@ Le deuxième argument de `useEffect` est le **tableau de dépendances**. Il cont
 Dans la suite du TP, nous utiliserons une librairie externe pour stocker les données récupérées sur le serveur.
 </Aside>
 
+<Aside type="caution" title="Erreur CORS (Cross-Origin Request)">
+Si vous rencontrez une erreur **Blocage d'une requête multiorigines (Cross-Origin Request)**, ajoutez la ligne suivante dans `Application::execute()` juste avant `$router->dispatch()` :
+
+```php
+header('Access-Control-Allow-Origin: *');
+```
+</Aside>
+
 ---
 
 ## Affichage des navires

@@ -6,6 +6,7 @@ export default defineConfig({
 	integrations: [
 		starlight({
 			title: 'Battleship — TP Frontend',
+			customCss: ['./src/styles/tp.css'],
 			defaultLocale: 'root',
 			locales: {
 				root: { label: 'Français', lang: 'fr' },
@@ -22,6 +23,7 @@ export default defineConfig({
 				{ label: '4. Positions des navires', slug: 'positions-navires' },
 				{ label: '5. Création de la carte', slug: 'carte' },
 				{ label: '6. Suite', slug: 'suite' },
+				{ label: 'Notions clés', slug: 'notions-cles' },
 			],
 		}),
 	],

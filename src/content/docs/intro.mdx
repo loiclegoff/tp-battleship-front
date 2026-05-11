@@ -43,6 +43,8 @@ Commençons par créer un fichier HTML statique :
 </html>
 ```
 
+<div id="composant-fonctionnel" class="tp-anchor" />
+
 ### Premier composant
 
 Créons maintenant notre premier composant React :
@@ -68,9 +70,19 @@ const root = ReactDOM.createRoot(rootElement);
 root.render(<App />);
 ```
 
+<div id="virtual-dom" class="tp-anchor" />
+
+<Aside type="note" title="Virtual DOM — pourquoi React, et pas du JS pur ?">
+Avec du JavaScript pur, mettre à jour l'UI revient à chercher chaque élément (`document.querySelector(...)`) et à modifier le DOM à la main, case par case.
+
+React utilise un **Virtual DOM** : une représentation en mémoire de votre UI. Quand l'état change, React calcule l'ancien et le nouveau Virtual DOM, en fait la différence, puis applique au DOM réel **uniquement ce qui a changé**. Vous décrivez *à quoi doit ressembler l'UI*, React s'occupe de la synchronisation.
+</Aside>
+
 <Aside type="note">
 Écrire l'ensemble de notre code dans un seul fichier complexifierait l'expérience du développeur. De la même manière que les fonctions, le frontend utilise des **composants** pour découper le code et le factoriser.
 </Aside>
+
+<div id="jsx" class="tp-anchor" />
 
 ### JSX : le langage des composants React
 
@@ -132,6 +144,14 @@ Et la maquette ressemble à ceci :
   </ol>
 </div>
 
+<div id="flux-unidirectionnel" class="tp-anchor" />
+
+<Aside type="note" title="Flux de données unidirectionnel">
+Dans React, les données circulent **du parent vers l'enfant** via les *props*. `FilterableProductTable` passe la liste filtrée à `ProductTable`, qui la passe à chaque `ProductRow` — toujours vers le bas.
+
+Pour faire remonter une information (ex : un clic, une saisie utilisateur), l'enfant **ne modifie jamais directement le parent** : il appelle un *callback* que le parent lui a fourni. Ce sens unique rend le flux des données prédictible et facile à déboguer.
+</Aside>
+
 <Aside type="tip" title="Pour aller plus loin">
 Pour en savoir plus sur cette approche de conception, consultez [Thinking in React](https://react.dev/learn/thinking-in-react) dans la documentation officielle.
 </Aside>
@@ -166,6 +186,8 @@ Vous pouvez utiliser un éditeur en ligne comme [Excalidraw](https://excalidraw.
 
 </Written>
 
+<div id="vite" class="tp-anchor" />
+
 ## Installation de l'environnement de développement
 
 <Aside type="note" title="Pourquoi passer à un projet avec npm ?">
@@ -196,6 +218,8 @@ Vous pouvez maintenant ouvrir votre navigateur sur [http://localhost:5173](http:
 <Aside type="caution">
 Pour l'instant, la majorité du code se trouve dans le fichier **App.tsx**. C'est normal que vous ne compreniez pas tout le contenu à ce stade du TP.
 </Aside>
+
+<div id="devtools" class="tp-anchor" />
 
 <Aside type="note" title="React Developer Tools">
 Installez l'extension **React Developer Tools** dans votre navigateur (disponible sur Chrome et Firefox). Elle ajoute deux onglets dans les outils de développement (F12) :

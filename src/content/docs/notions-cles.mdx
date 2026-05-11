@@ -1,0 +1,279 @@
+---
+title: Notions clés
+description: Sommaire des concepts à connaître pour suivre le TP
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Concept from '../../components/Concept.astro';
+
+Cette page regroupe les notions clés du TP. Chaque carte renvoie au chapitre où
+la notion est introduite et expliquée en détail.
+
+<Aside type="tip">
+Utilisez cette page comme **carte mentale** : avant chaque chapitre, repérez les
+notions nouvelles ; après, vérifiez que vous savez les expliquer.
+</Aside>
+
+<Aside type="note" title="Évaluation">
+Ces notions sont celles mobilisées lors du contrôle. Savoir les **expliquer avec
+vos mots** compte autant que de savoir les utiliser dans le code.
+</Aside>
+
+## JavaScript / TypeScript
+
+<Concept badge="ES6 — syntaxe moderne" chapter="2" href="/affichage-navires/#es6-spread">
+
+Trois éléments du JavaScript moderne qu'on utilise en permanence en React :
+
+- **Destructuration** — extraire des champs d'un objet :
+  `const { name, length } = ship`. Très utilisée pour lire les props :
+  `({ ship }) => ...`.
+- **Spread `...`** — copier un tableau ou un objet en y intégrant des
+  changements : `[...ships, newShip]`, `{ ...ship, length: 5 }`. Indispensable
+  pour mettre à jour le state sans le muter.
+- **Fonctions fléchées** — syntaxe concise pour les composants et les
+  callbacks : `const App = () => <h1>...</h1>`, `onClick={() => setCount(count + 1)}`.
+
+</Concept>
+
+<Concept badge="Import / Export" chapter="2" href="/affichage-navires/#import-export">
+
+Un fichier expose son code via `export`, un autre le récupère via `import`.
+Deux variantes :
+
+- **Export *default*** — un seul par fichier (souvent le composant principal).
+  Le nom est libre à l'import : `export default ShipCard;` →
+  `import ShipCard from './ShipCard'`.
+- **Export *nommé*** — plusieurs par fichier (types, utilitaires). Le nom doit
+  correspondre exactement, entre accolades : `export interface Ship { ... }` →
+  `import { Ship } from './types'`.
+
+</Concept>
+
+<Concept badge="Interface TypeScript" chapter="2" href="/affichage-navires/#interface-typescript">
+
+Décrit la forme d'un objet (`Ship`, `ShipCardProps`). Sert à typer les props
+d'un composant et les retours d'API.
+
+</Concept>
+
+<Concept badge="Promise & .then / .catch" chapter="2" href="/affichage-navires/#promise">
+
+Représente une opération asynchrone. `axios.get().then(...).catch(...)` permet
+d'enchaîner le traitement de la réponse et la gestion des erreurs.
+
+</Concept>
+
+## React — les fondamentaux
+
+<Concept badge="Virtual DOM" chapter="1" href="/intro/#virtual-dom">
+
+React maintient une représentation en mémoire de l'UI (le *Virtual DOM*). Quand
+l'état change, il compare l'ancien et le nouveau, puis applique au DOM réel
+**seulement les différences**. Pas de manipulation manuelle du DOM.
+
+</Concept>
+
+<Concept badge="Flux unidirectionnel" chapter="1" href="/intro/#flux-unidirectionnel">
+
+Les données circulent toujours **du parent vers l'enfant** via les props. Pour
+faire remonter une information (ex : un clic), l'enfant appelle un *callback*
+fourni par le parent. Ce sens unique rend le flux prédictible.
+
+</Concept>
+
+<Concept badge="JSX" chapter="1" href="/intro/#jsx">
+
+Syntaxe XML dans du TypeScript, compilée par Vite. Règles essentielles : un seul
+élément racine, `className` au lieu de `class`, expressions JS entre `{ }`.
+
+</Concept>
+
+<Concept badge="Composant fonctionnel" chapter="1" href="/intro/#composant-fonctionnel">
+
+Fonction qui retourne du JSX, nommée en PascalCase. Bloc de base de toute
+application React. Quand un même bloc de JSX se répète (deux cartes, plusieurs
+cases…), on l'**extrait dans son propre composant** et on lui passe ses
+variations en props.
+
+</Concept>
+
+<Concept badge="Props" chapter="2" href="/affichage-navires/#props">
+
+Données reçues du composant parent, **en lecture seule**. Typées via une
+interface. Un composant enfant ne peut pas modifier ses props.
+
+</Concept>
+
+<Concept badge="useState" chapter="2" href="/affichage-navires/#usestate">
+
+Hook pour stocker une donnée *mutable au cours du temps*. `useState(initial)`
+prend la **valeur initiale** et retourne `[valeur, setter]`. Toujours mettre à
+jour via le setter (`setCount(5)`) — l'assignation directe (`count = 5`) est
+sans effet.
+
+</Concept>
+
+<Concept badge="useEffect" chapter="2" href="/affichage-navires/#useeffect">
+
+Hook pour déclencher un effet de bord (appel API, abonnement…) après le rendu.
+Le **tableau de dépendances** contrôle quand l'effet rejoue : `[]` = une seule
+fois ; `[variable]` = à chaque changement de `variable`.
+
+</Concept>
+
+<Concept badge="Rendu de liste" chapter="2" href="/affichage-navires/#rendu-de-liste">
+
+`array.map((item) => <Component .../>)` pour afficher une collection. La prop
+**`key`** est obligatoire : un identifiant stable et unique, idéalement métier
+(pas l'index du tableau).
+
+</Concept>
+
+<Concept badge="Affichage conditionnel" chapter="2" href="/affichage-navires/#affichage-conditionnel">
+
+Afficher un contenu différent selon l'état : `if (isLoading) return <Spinner />`
+ou `{condition && <Element />}` directement dans le JSX.
+
+</Concept>
+
+<Concept badge="Immutabilité du state" chapter="2" href="/affichage-navires/#immutabilite">
+
+React détecte les changements en comparant les références. Il faut toujours créer
+un nouvel objet ou tableau : `setShips([...ships, newShip])`, jamais
+`ships.push(newShip)`.
+
+</Concept>
+
+<Concept badge="Re-render" chapter="2" href="/affichage-navires/#re-render">
+
+Un composant est re-rendu dans 3 cas : (1) son **state** change, (2) ses **props**
+changent, (3) son **parent** se re-rend.
+
+**Cycle complet sur un clic** : `onClick` → handler → `setState(newValue)` →
+React détecte le changement de référence → ré-exécute la fonction-composant →
+applique au DOM via le Virtual DOM.
+
+</Concept>
+
+<Concept badge="Événements" chapter="3" href="/authentification/#evenements">
+
+`onChange`, `onSubmit`, `onClick`… Fonctions appelées par React quand
+l'utilisateur interagit. Penser à `e.preventDefault()` pour empêcher la
+soumission native d'un formulaire.
+
+</Concept>
+
+<Concept badge="Formulaire contrôlé" chapter="3" href="/authentification/#formulaire-controle">
+
+La valeur d'un `<input>` est pilotée par un état + un `onChange` qui met cet état
+à jour. La source de vérité, c'est l'état React — pas le DOM.
+
+</Concept>
+
+<Concept badge="Lifting state up" chapter="4" href="/positions-navires/#lifting-state-up">
+
+Quand plusieurs composants partagent une donnée, on **remonte l'état dans leur
+parent commun**. Le parent déclare `useState` puis transmet **à la fois la
+valeur et le setter** en props : `<ShipCard selected={selected} onSelect={setSelected} />`.
+L'enfant appelle `onSelect(...)` pour faire muter l'état du parent.
+
+</Concept>
+
+## Pour aller plus loin
+
+<Aside type="caution" title="Hors examen">
+Cette section **n'est pas requise pour l'examen**. Elle regroupe des outils et
+notions utiles pour terminer le TP ou poursuivre votre apprentissage de React.
+</Aside>
+
+### Écosystème & outillage
+
+<Concept badge="Vite" chapter="1" href="/intro/#vite">
+
+Outil de build moderne : compile le TypeScript, recharge le navigateur à chaque
+modification (HMR), bundle le projet pour la production. `npm run dev` démarre
+le serveur de dev.
+
+</Concept>
+
+<Concept badge="React DevTools" chapter="1" href="/intro/#devtools">
+
+Extension navigateur. Onglet **Components** : exploration de l'arbre, des props
+et du state en direct. Indispensable pour déboguer un composant.
+
+</Concept>
+
+<Concept badge="axios" chapter="2" href="/affichage-navires/#axios">
+
+Client HTTP basé sur les Promises. `axios.get('/api/ships')` pour récupérer,
+`axios.post('/api/auth', body)` pour envoyer. API plus simple que `fetch`.
+
+</Concept>
+
+<Concept badge="React Router" chapter="3" href="/authentification/#react-router">
+
+Routage côté client. Définit les pages, permet de naviguer sans rechargement
+(`<Link>`, `useNavigate`) et de récupérer les paramètres d'URL.
+
+</Concept>
+
+<Concept badge="localStorage" chapter="3" href="/authentification/#localstorage">
+
+Stockage clé-valeur persistant dans le navigateur. Utilisé pour conserver le
+token d'authentification entre les sessions.
+
+</Concept>
+
+<Concept badge="Chakra UI" chapter="3" href="/authentification/#chakra">
+
+Librairie de composants pré-stylés (`Box`, `Input`, `Field`, `Spinner`…). Évite
+d'écrire du CSS à la main pour les éléments standard du formulaire.
+
+</Concept>
+
+<Concept badge="Interceptors axios" chapter="6" href="/suite/#interceptors">
+
+Hooks qui s'exécutent sur chaque requête sortante. Permettent d'injecter
+automatiquement le token d'authentification dans le header `Authorization`.
+
+</Concept>
+
+### Hooks et librairies avancés
+
+<Concept badge="useReducer" href="https://react.dev/reference/react/useReducer">
+
+Alternative à `useState` quand l'état est complexe ou que plusieurs sous-valeurs
+évoluent ensemble. Sépare la logique de mise à jour dans une fonction *reducer*
+pure : `dispatch({ type: 'SHIP_PLACED', payload: ... })`.
+
+</Concept>
+
+<Concept badge="useContext" href="https://react.dev/reference/react/useContext">
+
+Partage une valeur (utilisateur connecté, thème…) à travers l'arbre des composants
+sans passer par les props. Évite le *prop drilling*.
+
+</Concept>
+
+<Concept badge="useRef" href="https://react.dev/reference/react/useRef">
+
+Référence vers un élément du DOM (ex. donner le focus à un input) ou stockage
+d'une valeur qui **ne déclenche pas de re-render** quand elle change.
+
+</Concept>
+
+<Concept badge="useMemo / useCallback" href="https://react.dev/reference/react/useMemo">
+
+Mémoïsation : évite de recalculer une valeur ou recréer une fonction à chaque
+rendu. À utiliser **uniquement** quand un problème de performance est identifié.
+
+</Concept>
+
+<Concept badge="TanStack Query" href="https://tanstack.com/query/latest/docs/react/overview">
+
+Librairie pour gérer l'asynchronisme des requêtes : cache, refetch automatique,
+état `isLoading` / `error` géré pour vous. Remplace souvent la combinaison
+`useState` + `useEffect` pour charger des données.
+
+</Concept>

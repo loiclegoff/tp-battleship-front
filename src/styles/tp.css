@@ -1,0 +1,6 @@
+/* Ancre invisible utilisée pour cibler une zone précise dans un chapitre.
+   Le scroll-margin-top compense le header sticky de Starlight pour que le
+   contenu cible apparaisse juste sous la barre de navigation. */
+.tp-anchor {
+  scroll-margin-top: 5rem;
+}

@@ -14,12 +14,16 @@ Notions importantes pour cette partie :
 - l'affichage conditionnel des composants : [documentation officielle](https://react.dev/learn/conditional-rendering)
 - l'affichage des listes : [documentation officielle](https://react.dev/learn/rendering-lists)
 
+<div id="axios" class="tp-anchor" />
+
 ## Mise en place du client HTTP
 
 <Aside type="note">
 L'**API Fetch** fournit une interface JavaScript pour accéder aux ressources réseau de manière asynchrone. Pour ce projet, nous utiliserons plutôt **axios**, une bibliothèque HTTP client basée sur les promesses, qui offre une API plus simple.
 ([documentation officielle axios](https://axios-http.com/fr/docs/intro))
 </Aside>
+
+<div id="interface-typescript" class="tp-anchor" />
 
 <Task title="Étape 1 : Création d'une interface pour les navires">
 
@@ -36,6 +40,8 @@ export interface Ship {
 Cette interface décrit la structure des données des navires que nous allons manipuler.
 
 </Task>
+
+<div id="promise" class="tp-anchor" />
 
 <Task title="Étape 2 : Création du service">
 
@@ -65,6 +71,43 @@ C'est dans ce fichier `battleship.service.ts` que vous ajouterez les nouvelles r
 
 </Task>
 
+<div id="import-export" class="tp-anchor" />
+
+<Aside type="note" title="Comprendre `import` et `export`">
+Le service que vous venez d'écrire utilise les **deux variantes d'export** du JavaScript moderne. Il est important de bien les distinguer.
+
+**Export *default*** — un seul par fichier, généralement le composant ou la classe principale. À l'import, le nom est **libre**.
+
+```ts title="battleship.service.ts"
+// la classe est exportée comme « valeur par défaut » du fichier
+export default class BattleshipService { ... }
+```
+
+```ts title="ShipsPage.tsx"
+// le nom est libre — il pourrait s'appeler Service, Api, etc.
+import BattleshipService from '../services/battleship.service';
+```
+
+**Export *nommé*** — plusieurs par fichier, typique pour les types et les utilitaires. À l'import, on encadre les noms entre **accolades**, et ils doivent **correspondre exactement** à ceux exportés.
+
+```ts title="types.ts"
+export interface Ship { ... }
+export type CellState = 'empty' | 'ship' | 'hit';
+```
+
+```ts title="ShipsPage.tsx"
+// noms exacts entre accolades
+import { type Ship, type CellState } from '../types';
+```
+
+Les deux peuvent se combiner dans un même `import` :
+
+```ts
+import React, { useState, useEffect } from 'react';
+//     ↑ default        ↑ exports nommés
+```
+</Aside>
+
 <Task title="Étape 3 : Installation d'axios">
 
 ```bash
@@ -74,6 +117,8 @@ npm install axios
 </Task>
 
 ---
+
+<div id="usestate" class="tp-anchor" />
 
 ## Découverte de `useState`
 
@@ -162,16 +207,30 @@ Dans le code actuel, le composant est utilisé comme page sur le path `/` de vot
 
 ### Récupérer les navires et les stocker dans un état
 
+<div id="useeffect" class="tp-anchor" />
+<div id="affichage-conditionnel" class="tp-anchor" />
+
 <Task title="Créer le composant de page">
 
 Sur votre nouvelle page, créez un composant qui :
 - utilise le hook **`useState`** pour stocker la liste des navires ;
-- utilise le hook **`useEffect`** pour déclencher l'appel API et mettre à jour cet état ;
+- utilise le hook **`useEffect`** pour déclencher l'appel API **une seule fois** au montage du composant — placer l'appel hors de `useEffect` le ferait rejouer à chaque rendu et provoquerait une **boucle infinie de requêtes** ;
 - utilise un composant dédié pour afficher chaque navire.
 
 Vous trouverez plus de détails sur [useState](https://react.dev/reference/react/useState) et [useEffect](https://react.dev/reference/react/useEffect) dans la documentation officielle React.
 
 </Task>
+
+<Aside type="caution" title="Pourquoi `useEffect` est indispensable ici">
+Le corps d'une fonction-composant est **ré-exécuté à chaque rendu**. Si vous appelez `BattleshipService.getShips()` directement dans le corps du composant :
+
+1. l'appel API se déclenche ;
+2. le `.then()` exécute `setShips(data)` ;
+3. ce setter provoque un **nouveau rendu** ;
+4. qui ré-exécute le corps… et **relance l'appel API**.
+
+→ Boucle infinie de requêtes. `useEffect(() => { ... }, [])` isole l'appel et garantit qu'il ne s'exécute qu'**une seule fois**, après le premier rendu.
+</Aside>
 
 <Example title="Exemple de mise en œuvre">
 
@@ -292,6 +351,8 @@ Importez et utilisez ce composant dans `ShipsPage.tsx` pour vérifier qu'il s'af
 
 ### Étape 2 : Passer les données via les props
 
+<div id="props" class="tp-anchor" />
+
 <Task title="Étape 2 : Définir les props et injecter les données">
 
 Faisons en sorte que le composant reçoive les données depuis son parent. On définit une interface TypeScript pour documenter ce que le composant attend :
@@ -317,6 +378,34 @@ export default ShipCard;
 
 </Task>
 
+<Aside type="note" title="Lire les props avec la destructuration">
+La signature `({ ship }: ShipCardProps)` utilise la **destructuration** d'objet, un raccourci ES6 pour extraire des champs d'un objet.
+
+Trois écritures strictement équivalentes :
+
+```tsx
+// 1. Sans destructuration — on accède via props.ship
+const ShipCard = (props: ShipCardProps) => {
+  return <h2>{props.ship.name}</h2>;
+};
+
+// 2. Destructuration en début de fonction
+const ShipCard = (props: ShipCardProps) => {
+  const { ship } = props;
+  return <h2>{ship.name}</h2>;
+};
+
+// 3. Destructuration directe dans la signature — la forme idiomatique
+const ShipCard = ({ ship }: ShipCardProps) => {
+  return <h2>{ship.name}</h2>;
+};
+```
+
+C'est la **3ᵉ forme** qu'on utilise en React. Elle s'étend naturellement à plusieurs props : `({ ship, isPlaced, onClick }: ShipCardProps)`.
+</Aside>
+
+<div id="rendu-de-liste" class="tp-anchor" />
+
 ### Étape 3 : Afficher la liste avec `.map()`
 
 <Task title="Étape 3 : Utiliser le composant dans la liste">
@@ -340,8 +429,11 @@ return (
 Elle permet à React d'identifier chaque élément de façon unique pour optimiser les re-rendus. Évitez d'utiliser l'index du tableau comme clé : préférez un identifiant métier stable comme `ship.key`.
 </Aside>
 
+<div id="immutabilite" class="tp-anchor" />
+<div id="es6-spread" class="tp-anchor" />
+
 <Aside type="caution" title="Ne jamais muter le state directement">
-React ne détecte les changements que via la fonction setter :
+React ne détecte les changements que via la fonction setter, en comparant la **référence** de la nouvelle valeur à l'ancienne. `push` modifie le tableau existant : la référence reste la même, React ne voit rien.
 
 ```tsx
 // ❌ INCORRECT — React ne verra pas le changement
@@ -350,6 +442,39 @@ ships.push(newShip);
 // ✅ CORRECT — on passe un nouveau tableau
 setShips([...ships, newShip]);
 ```
+</Aside>
+
+<Aside type="note" title="Le spread operator (`...`) en détail">
+Le `...` est l'**opérateur de décomposition** d'ES6. Il *« déballe »* les éléments d'un tableau ou les champs d'un objet à l'endroit où il est utilisé. Trois usages courants :
+
+```ts
+// 1. Copier un tableau et ajouter un élément
+const ships = ['Destroyer', 'Carrier'];
+const next = [...ships, 'Submarine'];
+// → ['Destroyer', 'Carrier', 'Submarine']
+
+// 2. Copier un objet et modifier un champ
+const ship = { name: 'Destroyer', length: 3 };
+const updated = { ...ship, length: 5 };
+// → { name: 'Destroyer', length: 5 }
+
+// 3. Fusionner deux objets
+const merged = { ...defaults, ...userPrefs };
+```
+
+En React, c'est cet opérateur qui permet de respecter l'**immutabilité** : on ne touche jamais à l'objet ou au tableau original, on en crée un nouveau qui en hérite.
+</Aside>
+
+<div id="re-render" class="tp-anchor" />
+
+<Aside type="note" title="Quand un composant se re-rend-il ?">
+Un composant React est re-rendu dans **trois** cas :
+
+1. **Son state change** (via un setter `useState`) ;
+2. **Ses props changent** (le parent lui passe une nouvelle valeur) ;
+3. **Son parent se re-rend** (par défaut, tous les enfants sont aussi re-rendus).
+
+C'est pour cette raison que l'immutabilité est essentielle : sans nouvelle référence, React ne déclenche pas le re-render.
 </Aside>
 
 <img src="/images/list-ships.png" alt="Proposition de style pour la liste des navires" style="max-width: 55%; display: block; margin: 1rem auto;" />

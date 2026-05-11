@@ -16,6 +16,22 @@ Notions importantes pour cette partie :
 
 Cette partie est plus avancée et demande une bonne compréhension de la gestion d'état et du flux de données entre composants. Vous allez créer un formulaire interactif permettant de positionner les navires sur une grille.
 
+<Aside type="caution" title="Prérequis — une partie doit exister en base">
+Côté backend, le placement des navires se fait **toujours dans le contexte d'une partie** : la table des positions référence à la fois un navire, un joueur et une partie. Avant de pouvoir enregistrer quoi que ce soit depuis le front, il faut donc qu'il existe en base une partie à laquelle votre joueur est rattaché.
+
+Pour démarrer rapidement, **sans construire encore l'écran de matchmaking** :
+
+1. **Créer la partie en base** — via votre client de base de données (ou l'interface d'admin du backend), insérez manuellement une ligne dans la table des parties et **notez son identifiant** (par exemple `partie-1`).
+2. **Inscrire votre joueur** — ajoutez votre utilisateur comme participant de cette partie (selon le schéma de votre backend, c'est soit un champ direct, soit une table de liaison).
+3. **Mettre l'identifiant en dur côté front** — dans `battleship.service.ts`, déclarez une constante et utilisez-la dans l'URL de l'appel POST de positionnement :
+
+   ```ts
+   const PARTIE_KEY = 'partie-1';
+   ```
+
+Cette valeur en dur n'est qu'une **étape intermédiaire** pour avancer sur la mécanique du placement. Plus tard (vue *Rejoindre une partie*), l'identifiant viendra de la navigation utilisateur — la constante disparaîtra alors.
+</Aside>
+
 <div id="lifting-state-up" class="tp-anchor" />
 
 ## Formulaire d'ajout de navire sur la carte

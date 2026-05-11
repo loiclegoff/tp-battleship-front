@@ -21,35 +21,6 @@ vos mots** compte autant que de savoir les utiliser dans le code.
 
 ## JavaScript / TypeScript
 
-<Concept badge="ES6 — syntaxe moderne" chapter="2" href="/affichage-navires/#es6-spread">
-
-Trois éléments du JavaScript moderne qu'on utilise en permanence en React :
-
-- **Destructuration** — extraire des champs d'un objet :
-  `const { name, length } = ship`. Très utilisée pour lire les props :
-  `({ ship }) => ...`.
-- **Spread `...`** — copier un tableau ou un objet en y intégrant des
-  changements : `[...ships, newShip]`, `{ ...ship, length: 5 }`. Indispensable
-  pour mettre à jour le state sans le muter.
-- **Fonctions fléchées** — syntaxe concise pour les composants et les
-  callbacks : `const App = () => <h1>...</h1>`, `onClick={() => setCount(count + 1)}`.
-
-</Concept>
-
-<Concept badge="Import / Export" chapter="2" href="/affichage-navires/#import-export">
-
-Un fichier expose son code via `export`, un autre le récupère via `import`.
-Deux variantes :
-
-- **Export *default*** — un seul par fichier (souvent le composant principal).
-  Le nom est libre à l'import : `export default ShipCard;` →
-  `import ShipCard from './ShipCard'`.
-- **Export *nommé*** — plusieurs par fichier (types, utilitaires). Le nom doit
-  correspondre exactement, entre accolades : `export interface Ship { ... }` →
-  `import { Ship } from './types'`.
-
-</Concept>
-
 <Concept badge="Interface TypeScript" chapter="2" href="/affichage-navires/#interface-typescript">
 
 Décrit la forme d'un objet (`Ship`, `ShipCardProps`). Sert à typer les props
@@ -86,15 +57,6 @@ fourni par le parent. Ce sens unique rend le flux prédictible.
 
 Syntaxe XML dans du TypeScript, compilée par Vite. Règles essentielles : un seul
 élément racine, `className` au lieu de `class`, expressions JS entre `{ }`.
-
-</Concept>
-
-<Concept badge="Composant fonctionnel" chapter="1" href="/intro/#composant-fonctionnel">
-
-Fonction qui retourne du JSX, nommée en PascalCase. Bloc de base de toute
-application React. Quand un même bloc de JSX se répète (deux cartes, plusieurs
-cases…), on l'**extrait dans son propre composant** et on lui passe ses
-variations en props.
 
 </Concept>
 
@@ -164,6 +126,53 @@ soumission native d'un formulaire.
 
 </Concept>
 
+## Pour aller plus loin
+
+<Aside type="caution" title="Hors examen">
+Cette section **n'est pas requise pour l'examen**. Elle regroupe des notions et
+outils utiles pour terminer le TP ou poursuivre votre apprentissage de React.
+</Aside>
+
+### Notions complémentaires
+
+<Concept badge="ES6 — syntaxe moderne" chapter="2" href="/affichage-navires/#es6-spread">
+
+Trois éléments du JavaScript moderne qu'on utilise en permanence en React :
+
+- **Destructuration** — extraire des champs d'un objet :
+  `const { name, length } = ship`. Très utilisée pour lire les props :
+  `({ ship }) => ...`.
+- **Spread `...`** — copier un tableau ou un objet en y intégrant des
+  changements : `[...ships, newShip]`, `{ ...ship, length: 5 }`. Indispensable
+  pour mettre à jour le state sans le muter.
+- **Fonctions fléchées** — syntaxe concise pour les composants et les
+  callbacks : `const App = () => <h1>...</h1>`, `onClick={() => setCount(count + 1)}`.
+
+</Concept>
+
+<Concept badge="Import / Export" chapter="2" href="/affichage-navires/#import-export">
+
+Un fichier expose son code via `export`, un autre le récupère via `import`.
+Deux variantes :
+
+- **Export *default*** — un seul par fichier (souvent le composant principal).
+  Le nom est libre à l'import : `export default ShipCard;` →
+  `import ShipCard from './ShipCard'`.
+- **Export *nommé*** — plusieurs par fichier (types, utilitaires). Le nom doit
+  correspondre exactement, entre accolades : `export interface Ship { ... }` →
+  `import { Ship } from './types'`.
+
+</Concept>
+
+<Concept badge="Composant fonctionnel" chapter="1" href="/intro/#composant-fonctionnel">
+
+Fonction qui retourne du JSX, nommée en PascalCase. Bloc de base de toute
+application React. Quand un même bloc de JSX se répète (deux cartes, plusieurs
+cases…), on l'**extrait dans son propre composant** et on lui passe ses
+variations en props.
+
+</Concept>
+
 <Concept badge="Formulaire contrôlé" chapter="3" href="/authentification/#formulaire-controle">
 
 La valeur d'un `<input>` est pilotée par un état + un `onChange` qui met cet état
@@ -179,13 +188,6 @@ valeur et le setter** en props : `<ShipCard selected={selected} onSelect={setSel
 L'enfant appelle `onSelect(...)` pour faire muter l'état du parent.
 
 </Concept>
-
-## Pour aller plus loin
-
-<Aside type="caution" title="Hors examen">
-Cette section **n'est pas requise pour l'examen**. Elle regroupe des outils et
-notions utiles pour terminer le TP ou poursuivre votre apprentissage de React.
-</Aside>
 
 ### Écosystème & outillage
 
